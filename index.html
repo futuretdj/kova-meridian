@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>KOVA Meridian 01 — Mechanical Chronograph</title>
+<meta name="description" content="KOVA Meridian 01. A hand-assembled mechanical chronograph. Concept product site.">
+<meta name="theme-color" content="#0f3b2e">
+<link rel="preload" href="fonts/unbounded-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:Unbounded;src:url(fonts/unbounded-latin.woff2) format('woff2');font-weight:200 900;unicode-range:U+0000-00FF,U+2000-206F,U+20AC,U+2122}
+@font-face{font-family:Unbounded;src:url(fonts/unbounded-cyrillic.woff2) format('woff2');font-weight:200 900;unicode-range:U+0400-045F}
+@font-face{font-family:Manrope;src:url(fonts/manrope-latin.woff2) format('woff2');font-weight:200 800;unicode-range:U+0000-00FF,U+2000-206F,U+20AC,U+2122}
+@font-face{font-family:Manrope;src:url(fonts/manrope-cyrillic.woff2) format('woff2');font-weight:200 800;unicode-range:U+0400-045F}
+:root{--bg1:#16503d;--bg2:#04140f;--fg:#f3eee2;--mut:rgba(243,238,226,.62);--acc:#d9b36c;--line:rgba(243,238,226,.18)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:auto}
+body{background:var(--bg2);color:var(--fg);font:400 16px/1.6 Manrope,system-ui,sans-serif;overflow-x:hidden;transition:color .5s}
+#bg{position:fixed;inset:0;z-index:0;background:radial-gradient(70% 60% at 50% 42%,var(--bg1) 0%,var(--bg2) 75%)}
+#grain{position:fixed;inset:-50%;z-index:0;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 1.2s steps(3) infinite}
+@keyframes grain{50%{transform:translate(3%,-2%)}}
+#bigtitle{position:fixed;left:0;right:0;top:50%;transform:translateY(-58%);z-index:1;text-align:center;pointer-events:none;will-change:opacity,transform}
+#bigtitle .k{font:500 clamp(12px,1.2vw,16px)/1 Manrope;letter-spacing:.6em;color:var(--acc);margin-bottom:2vh}
+#bigtitle h1{font:800 clamp(64px,17vw,300px)/.85 Unbounded,sans-serif;letter-spacing:-.04em;color:transparent;-webkit-text-stroke:1.5px rgba(243,238,226,.55);background:linear-gradient(180deg,rgba(243,238,226,.22),rgba(243,238,226,0) 85%);-webkit-background-clip:text;background-clip:text}
+canvas#gl{position:fixed;inset:0;width:100vw;height:100vh;z-index:2;pointer-events:none}
+header{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:22px clamp(18px,4vw,56px)}
+.logo{font:700 18px Unbounded;letter-spacing:.25em}
+.logo span{color:var(--acc)}
+nav{display:flex;gap:28px;font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+nav a{color:var(--fg);text-decoration:none;opacity:.7;transition:opacity .2s}
+nav a:hover{opacity:1}
+.cta-s{border:1px solid var(--line);padding:9px 18px;border-radius:40px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg);background:rgba(255,255,255,.04);backdrop-filter:blur(8px);cursor:pointer}
+main{position:relative;z-index:3}
+section{position:relative;min-height:100vh;display:flex;align-items:center;padding:0 clamp(20px,7vw,120px)}
+section .t{max-width:440px}
+section.r{justify-content:flex-end}
+section.c{justify-content:center;text-align:center}
+.eyebrow{font-size:12px;letter-spacing:.38em;text-transform:uppercase;color:var(--acc);margin-bottom:18px;display:flex;align-items:center;gap:12px}
+.eyebrow:before{content:"";width:28px;height:1px;background:currentColor}
+section.c .eyebrow{justify-content:center}
+h2{font:700 clamp(30px,3.6vw,54px)/1.04 Unbounded;letter-spacing:-.02em;margin-bottom:20px}
+p.lead{color:var(--mut);font-size:17px;max-width:400px}
+section.c p.lead{margin:0 auto}
+.feats{margin-top:30px;display:grid;gap:14px}
+.feat{display:flex;gap:16px;align-items:baseline;border-top:1px solid var(--line);padding-top:14px}
+.feat b{font:600 22px Unbounded;min-width:84px}
+.feat span{color:var(--mut);font-size:14px}
+.hero-sub{position:absolute;left:0;right:0;bottom:7vh;text-align:center}
+.hero-sub p{color:var(--mut);font-size:15px;letter-spacing:.04em}
+.scroll{margin:18px auto 0;width:22px;height:36px;border:1.5px solid var(--line);border-radius:12px;position:relative}
+.scroll:after{content:"";position:absolute;left:50%;top:7px;width:3px;height:7px;margin-left:-1.5px;border-radius:2px;background:var(--fg);animation:sc 1.8s infinite}
+@keyframes sc{60%{transform:translateY(10px);opacity:0}100%{opacity:0}}
+.swatches{display:flex;gap:14px;margin-top:28px;flex-wrap:wrap}
+.sw{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;background:none;border:0;color:var(--fg);font:500 12px Manrope;letter-spacing:.14em;text-transform:uppercase;opacity:.65;transition:opacity .25s}
+.sw i{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);box-shadow:inset 0 -8px 16px rgba(0,0,0,.35);outline:2px solid transparent;outline-offset:4px;transition:outline-color .25s,transform .25s}
+.sw.on{opacity:1}.sw.on i{outline-color:var(--acc);transform:scale(1.06)}
+.parts{margin-top:26px;list-style:none;counter-reset:p}
+.parts li{counter-increment:p;display:flex;gap:14px;padding:11px 0;border-top:1px solid var(--line);font-size:14.5px;color:var(--mut)}
+.parts li:before{content:counter(p,decimal-leading-zero);font:600 12px Unbounded;color:var(--acc);padding-top:3px}
+.parts li b{color:var(--fg);font-weight:600;margin-right:6px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+.stat b{display:block;font:700 clamp(26px,2.6vw,38px)/1 Unbounded}
+.stat span{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.price{font:700 clamp(40px,5vw,72px)/1 Unbounded;margin:22px 0 6px}
+.btn{display:inline-flex;gap:10px;align-items:center;margin-top:24px;padding:17px 34px;border-radius:50px;background:var(--fg);color:var(--bg2);font:600 14px Manrope;letter-spacing:.16em;text-transform:uppercase;border:0;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(0,0,0,.35)}
+footer{position:relative;z-index:3;padding:40px clamp(20px,7vw,120px) 50px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:var(--mut);font-size:13px;border-top:1px solid var(--line)}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.reveal.in .d1{transition-delay:.1s}
+#progress{position:fixed;right:clamp(14px,2.5vw,36px);top:50%;transform:translateY(-50%);z-index:10;display:flex;flex-direction:column;gap:10px}
+#progress i{width:6px;height:6px;border-radius:50%;background:var(--fg);opacity:.25;transition:opacity .3s,transform .3s}
+#progress i.on{opacity:1;transform:scale(1.5)}
+#loader{position:fixed;inset:0;z-index:100;background:#04140f;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .8s,visibility .8s}
+#loader.gone{opacity:0;visibility:hidden}
+#loader .logo{font-size:26px;color:#f3eee2}
+#loader .bar{width:160px;height:1px;background:rgba(243,238,226,.2);overflow:hidden}
+#loader .bar i{display:block;height:100%;width:0;background:#d9b36c;transition:width .3s}
+#modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+#modal.on{display:flex}
+#modal .box{background:#0d1512;color:#f3eee2;border:1px solid rgba(243,238,226,.15);border-radius:22px;padding:34px;max-width:420px;text-align:center}
+#modal h3{font:700 22px Unbounded;margin-bottom:12px}
+#modal p{color:rgba(243,238,226,.7)}
+@media (max-width:820px){
+ nav{display:none}
+ section,section.r,section.c{align-items:flex-end;justify-content:center;text-align:left;padding-bottom:9vh}
+ section .t{width:100%}
+ #bg:after{content:'';position:absolute;left:0;right:0;bottom:0;height:62vh;background:linear-gradient(180deg,transparent,var(--bg2) 60%);opacity:.85}
+ section.c .t{text-align:center}
+ h2{font-size:30px}
+ p.lead{font-size:15.5px}
+ .feats{margin-top:18px}
+ .parts li{padding:8px 0;font-size:13.5px}
+ #progress{display:none}
+ #bigtitle{transform:translateY(-120%)}
+}
+</style>
+<script type="importmap">{"imports":{"three":"./lib/three.module.js","three/addons/":"./lib/"}}</script>
+</head>
+<body>
+<div id="loader"><div class="logo">KO<span style="color:#d9b36c">V</span>A</div><div class="bar"><i id="lbar"></i></div></div>
+<div id="bg"></div><div id="grain"></div>
+<div id="bigtitle"><div class="k">KOVA · CALIBRE K-01</div><h1>MERIDIAN</h1></div>
+<canvas id="gl"></canvas>
+<header><div class="logo">KO<span>V</span>A</div><nav><a href="#design">Design</a><a href="#dials">Dials</a><a href="#inside">Calibre</a><a href="#buy">Reserve</a></nav><button class="cta-s" data-buy>Reserve</button></header>
+<div id="progress"></div>
+
+<main>
+ <section id="hero" class="c" data-k="0">
+  <div class="hero-sub"><p>Mechanical chronograph · Assembled by hand in Vilnius</p><div class="scroll"></div></div>
+ </section>
+
+ <section id="design" data-k="1">
+  <div class="t reveal">
+   <div class="eyebrow">01 — Design</div>
+   <h2>Forty-one millimetres of restraint.</h2>
+   <p class="lead">A case milled from a single block of 316L steel, brushed by hand and finished with a polished chamfer that catches the light at every angle.</p>
+   <div class="feats">
+    <div class="feat"><b>41 mm</b><span>Case diameter, 11.8 mm thin</span></div>
+    <div class="feat"><b>100 m</b><span>Water resistance, screw-down crown</span></div>
+    <div class="feat"><b>Domed</b><span>Sapphire crystal, anti-reflective inside</span></div>
+   </div>
+  </div>
+ </section>
+
+ <section id="dials" class="r" data-k="2">
+  <div class="t reveal">
+   <div class="eyebrow">02 — Dials</div>
+   <h2>Four dials. One for every season.</h2>
+   <p class="lead">Each sunburst dial takes eleven layers of lacquer. Tap a colour — the watch changes in front of you.</p>
+   <div class="swatches" id="swatches"></div>
+  </div>
+ </section>
+
+ <section id="explode" data-k="3">
+  <div class="t reveal">
+   <div class="eyebrow">03 — Anatomy</div>
+   <h2>312 parts. Nothing hidden.</h2>
+   <ul class="parts">
+    <li><span><b>Sapphire crystal</b>domed, 2.1 mm</span></li>
+    <li><span><b>Sunburst dial</b>applied indices, Super-LumiNova</span></li>
+    <li><span><b>Monobloc case</b>316L steel, hand-finished</span></li>
+    <li><span><b>Calibre K-01</b>column-wheel chronograph</span></li>
+    <li><span><b>Display caseback</b>see the rotor at work</span></li>
+   </ul>
+  </div>
+ </section>
+
+ <section id="inside" class="r" data-k="4">
+  <div class="t reveal">
+   <div class="eyebrow">04 — Calibre K-01</div>
+   <h2>Look inside.</h2>
+   <p class="lead">Through the sapphire caseback: a gold rotor, ruby jewels and gears that never stop. Built to run for decades.</p>
+   <div class="stats">
+    <div class="stat"><b data-count="72">0</b><span>hours reserve</span></div>
+    <div class="stat"><b data-count="28800">0</b><span>vibrations / h</span></div>
+    <div class="stat"><b data-count="31">0</b><span>jewels</span></div>
+   </div>
+  </div>
+ </section>
+
+ <section id="buy" data-k="5">
+  <div class="t reveal">
+   <div class="eyebrow">Edition of 500</div>
+   <h2>Meridian 01</h2>
+   <div class="price">€1,290</div>
+   <p class="lead">Numbered caseback. Two straps included. Delivered across Europe in 5 days.</p>
+   <button class="btn" data-buy>Reserve yours →</button>
+  </div>
+ </section>
+</main>
+<footer><span>© 2026 KOVA Watches — concept product site</span><span>Design &amp; development: Vanys Studio</span></footer>
+
+<div id="modal"><div class="box"><h3>Thank you</h3><p>This is a concept website made to show what's possible: a real-time 3D product, scroll-driven animation and live colour configurator — no plugins, works on any phone.</p><button class="btn" id="mclose">Close</button></div></div>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>
